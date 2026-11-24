@@ -1,0 +1,33 @@
+name: Deploy course portal to GitHub Pages
+on:
+  push:
+    branches: [main]
+    paths:
+      - "course-portal/**"
+      - ".github/workflows/course-portal-pages.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: course-portal-pages
+  cancel-in-progress: true
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: course-portal
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
